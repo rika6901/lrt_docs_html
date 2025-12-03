@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LR Produkt – Produktkarte</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+      /* ============ БАЗОВОЕ И СТРУКТУРА ============ */
+      body {
+        font-family: Arial, sans-serif;
+        background: #f7f7f7;
+        padding-top: 1rem;
+      }
+      main {
+        padding: 0 15px;
+        max-width: 1300px;
+        margin: 0 auto;
+      }
+      /* ============ КНОПКА "НАВЕРХ" (Back To Top) ============ */
+      #backToTop {
+        display: none; /* Изначально скрыта */
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 500;
+        font-size: 16px;
+        border: 0;
+        background: #2a7a4d; /* Темно-зеленый цвет */
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: background 0.3s, transform 0.1s, opacity 0.3s;
+        cursor: pointer;
+        opacity: 0.9;
+      }
+      #backToTop:hover {
+        background: #1e5735; /* Более темный при наведении */
+        opacity: 1;
+      }
+      #backToTop.show {
+        display: block;
+      }
+
+      /* ============ ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКА (Новый стиль и анимация) ============ */
+      .lang-switch {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+      .lang-btn {
+        font-size: 1rem;
+        padding: 0.5rem 1.2rem;
+        border-radius: 999px;
+        border: 2px solid #0d6efd; /* Синий */
+        background-color: transparent;
+        color: #0d6efd;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        -webkit-tap-highlight-color: transparent;
+      }
+      .lang-btn.active {
+        background-color: #0d6efd;
+        color: #fff;
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+      }
+      .lang-btn:hover:not(.active) {
+        border-color: #0a58ca;
+        color: #0a58ca;
+        background-color: #e9f2ff;
+      }
+
+      /* ============ КАРТОЧКИ ТОВАРОВ ============ */
+.products-grid{ display:grid; gap:16px; }
+@media (min-width:768px){
+  .products-grid{ grid-template-columns: repeat(2, 1fr); gap:20px; }
+}
+.products-grid .catalog-block {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  padding: 16px 18px;
+  box-shadow:
+    inset 0 4px 12px rgba(144, 96, 233, 0.594),
+    0 4px 10px rgba(0, 0, 0, 0.05); /* внешняя мягкая */
+  border-bottom: 0;
+}
+.products-grid .catalog-block + .catalog-block{ border-top:0; }
+.products-grid .catalog-block > h2{
+  font-size:1.15rem;
+  font-weight:600;
+  margin:0 0 8px;
+  line-height:1.25;
+  text-align:center;
+}
+.products-grid .catalog-block > p{ margin:0; }
+.products-grid .catalog-block img{
+  max-width:100%;
+  height:auto;
+  border-radius:12px;
+  margin-top:8px;
+}
+
+/* Фото слева, текст справа (desktop) */
+.catalog-block{ align-items:flex-start; }
+.catalog-block .product-img{ width:240px; flex-shrink:0; border-radius:8px; }
+
+/* На телефонах фото сверху */
+@media (max-width:600px){
+  .catalog-block.d-flex{ flex-direction: column; }
+  .catalog-block .product-img{ width:100%; margin-bottom:12px; }
+}
+
+/* Списки внутри карточек */
+.catalog-block ul{ padding-left:1rem; margin:.5rem 0 0; }
+.catalog-block ul li {
+    margin-bottom: .3rem;
+    line-height: 1.4;
+    font-size: 0.9rem; /* 🔹 уменьшение шрифта */
+}
+.product-gift {
+    font-weight: bold;
+    color: #d9534f; /* приятный красный */
+    margin: 6px 0;
+    font-size: 1.05rem;
+}
+.catalog-block h6{ text-align:center; margin-bottom:.5rem; }
+.catalog-block h5{ text-align:center; margin-bottom:.5rem; }
+.catalog-block h4{ text-align:center; margin-bottom:.5rem; }
+
+/* Текстовые акценты */
+mark{ background:#fefc7d; padding:0 .2em; border-radius:.2em; }
+strong{ font-weight:700; }
+em{ font-style: italic; }
+.kw{
+  background:#eef6ff;
+  border:1px solid #f3e3b2;
+  padding:.1em .4em;
+  border-radius:.5em;
+}
+
+
+/* Placeholder для отсутствующих изображений */
+.img-fallback{
+  display:inline-block;
+  padding:8px 10px;
+  border:1px dashed #c9c9c9;
+  border-radius:8px;
+  font-size:.95rem;
+  color:#666;
+  background:#fafafa;
+}
+      /* Видео контейнер */
+      .video-container {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 ratio */
+        height: 0;
+        overflow: hidden;
+        border-radius: 12px;
+        margin-top: 10px;
+        margin-bottom: 15px;
+      }
+      .video-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+      }
+
+      /* ============ КНОПКИ ССЫЛОК TELEGRAM/WHATSAPP (Новый стиль) ============ */
+      .btn-group-contact {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: auto; /* Прижимает кнопки к низу карточки */
+        padding-top: 10px;
+      }
+      .btn-contact {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 15px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+      }
+      .btn-telegram {
+        background-color: #0088cc;
+        color: #fff;
+        border: 2px solid #0088cc;
+      }
+      .btn-telegram:hover {
+        background-color: #006dae;
+        color: #fff;
+      }
+      .btn-whatsapp {
+        background-color: #25d366;
+        color: #fff;
+        border: 2px solid #25d366;
+      }
+      .btn-whatsapp:hover {
+        background-color: #1fad56;
+        color: #fff;
+      }
+
+      /* Иконки для кнопок (используйте SVG или Font Awesome) */
+      .btn-contact svg {
+        margin-right: 8px;
+        width: 20px;
+        height: 20px;
+      }
+
+      /* ============ АДАПТАЦИЯ (Аккордеон для мобильных) ============ */
+
+      /* Оформление Аккордеона Bootstrap (для мобильных) */
+      @media (max-width: 768px) {
+        /* Скрываем заголовки h6 на мобильных */
+        .catalog-block h6 {
+          display: none;
+        }
+
+        /* Общие стили для элемента аккордеона в карточке */
+        .accordion-item {
+          border: 1px solid #ced4da; /* Добавляем тонкую рамку */
+          margin-bottom: 8px; /* Немного увеличиваем отступ */
+          background-color: #ffffff; /* Белый фон */
+          border-radius: 12px; /* Более заметное скругление */
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Легкая тень */
+        }
+        
+        /* Стиль для самой кнопки (Заголовок "Преимущества") */
+        .accordion-button {
+          font-size: 1.1rem; /* Увеличим шрифт */
+          font-weight: 700; /* Жирный шрифт */
+          padding: 1rem 1.25rem; /* Увеличим отступы */
+          color: #0d6efd; /* Синий цвет текста */
+          background-color: #bdd3f3; /* Светло-синий фон, чтобы привлечь внимание */
+          border-radius: 12px !important; /* Гарантируем скругление углов */
+        }
+
+        /* Стиль кнопки в НЕактивном (свернутом) состоянии */
+        .accordion-button.collapsed {
+            background-color: #b5d7f8; /* Чуть светлее фон для свернутой кнопки */
+            color: #212529; /* Темный текст */
+        }
+        .accordion-button.collapsed::after {
+            filter: grayscale(1); /* Делаем иконку стрелки серой */
+        }
+
+        /* Стиль кнопки в АКТИВНОМ (развернутом) состоянии */
+        .accordion-button:not(.collapsed) {
+          color: #004d9a; /* Темно-синий текст при открытии */
+          background-color: #d1e7ff; /* Более темный синий фон при открытии */
+          box-shadow: none;
+        }
+
+        /* Содержимое аккордеона */
+        .accordion-body {
+            padding-top: 5px;
+            padding-bottom: 15px;
+            font-size: 0.95rem;
+            background-color: #fff;
+            border-top: 1px dashed #9cc4ed; /* Добавим разделитель */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button id="backToTop" title="Наверх">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+      </svg>
+      <span data-i18n="btn_back_to_top">Наверх</span> </button>
+    </button>
+    <main id="catalog">
+      <div class="lang-switch">
+        <button id="lang-ru" class="lang-btn" data-lang="ru">🇷🇺 Русский</button>
+        <button id="lang-de" class="lang-btn active" data-lang="de">🇩🇪 Deutsch</button>
+      </div>
+
+      <h1 class="h2 fw-bold text-center mb-5" data-i18n="seite_title_catalogue">Katalog</h1>
+<div class="block">
+  <div class="block-title text-center text-muted small">Video</div>
+  <div class="video-container">
+    <video controls poster="/images/lr_video_poster.jpg">
+      <source src="video_detox.mp4" type="video/mp4" />
+    </video>
+  </div>
+</div>
+
+      <div class="products-grid">
+        <article id="card1" class="catalog-block" data-product-id="1">
+          <img id="img_card1" src="av_peach.png" alt="Aloe vera gel" class="product-img" />
+          <h4 data-i18n="card1_title">LR ALOE VIA Mind Master Formula Red</h4>
+          <p class="text-center text-secondary mb-3" data-i18n="card1_product_subtitle">
+            Für mehr mentale Leistung und weniger Stress
+          </p>
+
+          <div class="accordion d-block d-md-none" id="accordionCard1">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading1_1">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse1_1"
+                  aria-expanded="false"
+                  aria-controls="collapse1_1"
+                  data-i18n="card1_benefits_title"
+                >
+                  Vorteile
+                </button>
+              </h2>
+              <div
+                id="collapse1_1"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading1_1"
+                data-bs-parent="#accordionCard1"
+              >
+                <div class="accordion-body">
+                  <ul data-i18n-list="card1_benefits_list">
+                    <li>Steigert die geistige Leistungsfähigkeit</li>
+                    <li>Reduziert Stress</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-none d-md-block">
+            <h6 data-i18n="card1_benefits_title">Vorteile</h6>
+            <ul data-i18n-list="card1_benefits_list">
+              <li>Steigert die geistige Leistungsfähigkeit</li>
+              <li>Reduziert Stress</li>
+            </ul>
+          </div>
+          <div class="block">
+            <div class="block-title text-center text-muted small">Video</div>
+            <div class="video-container">
+              <video controls>
+                <source src="video_honey.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+          <div class="block">
+            <div class="block-title text-center text-muted small">Video</div>
+            <div class="video-container">
+              <video controls>
+                <source src="av_peach.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+
+          <div class="btn-group-contact">
+            <a href="https://t.me/+pUyDKLefvegxZDcy" target="_blank" class="btn-contact btn-telegram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path
+                  fill="currentColor"
+                  d="M446.7 98.6l-50.4 246.9c-2.4 11.2-11.2 16.4-19.6 13.6L246.2 284.2l-15 144.3c-2.8 11.2-9.6 13.6-18 11.2L12.4 260.6c-7.6-3.6-7.6-10.4 1.2-14l422.4-165.6c8.8-3.6 16.4 1.2 13.6 10.4zM161 306.1l43.2-40.4 140.2-133.2c6.4-6 5.6-8.8-2.8-4.4L188 285.2l-12.8 12.8 28.6 86.8c1.6 4.8 1.2 7.6-2 9.2l-10.8 4.8-19.2-66.8z"
+                />
+              </svg>
+              <span data-i18n="btn_telegram">Telegram</span>
+            </a>
+            <a href="https://wa.me/4917630133780
+" target="_blank" class="btn-contact btn-whatsapp">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path
+                  fill="currentColor"
+                  d="M380.9 97.4C339.4 56.4 282 33.4 220.8 33.4 120.3 33.4 39.4 114.3 39.4 214.8c0 37.3 11.4 72.4 33.4 103.7L32 480l110.1-29.6c29 15.6 62.4 24.5 97.5 24.5 100.5 0 181.4-80.9 181.4-181.4 0-59.5-28.5-112.5-72.2-146.1zM220.8 450.6c-31.4 0-60.1-8.5-85.7-23.3L99.7 420l-16.1 79.5 81.3-21.8c24.6 13.2 52.8 20.9 83.1 20.9 88.2 0 160-71.8 160-160S309 90.6 220.8 90.6c-48.4 0-92.4 21.6-122.9 56.7L85.4 171l-15.6 30.6c-17.7 34.6-26.7 73.6-26.7 114.7 0 71.9 58.4 130.3 130.3 130.3 34.4 0 66.3-13.4 90.3-37.4l-14.2-14.2c-20.8 20.8-49.8 34.1-81.8 34.1z"
+                />
+              </svg>
+              <span data-i18n="btn_whatsapp">WhatsApp</span>
+            </a>
+          </div>
+
+          <!--<p class="product-note mt-3" data-i18n="card1_note">
+            Wichtiger Hinweis: Die hier dargestellten Informationen dienen nur zu Informationszwecken und ersetzen keine ärztliche Beratung.
+          </p>-->
+        </article>
+
+        <article id="card2" class="catalog-block" data-product-id="2">
+          <img id="img_card2" src="av_pro-balance.png" alt="Pro Balance" class="product-img" />
+          <h4 data-i18n="card2_title">LR ALOE VIA Drinking Gel Honig</h4>
+          <p class="text-center text-secondary mb-3" data-i18n="card2_product_subtitle">
+            Der Klassiker: Stärkt das Immunsystem und unterstützt den Stoffwechsel
+          </p>
+          <div class="accordion d-block d-md-none" id="accordionCard2">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading2_1">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse2_1"
+                  aria-expanded="false"
+                  aria-controls="collapse2_1"
+                  data-i18n="card2_benefits_title"
+                >
+                  Wirkung
+                </button>
+              </h2>
+              <div
+                id="collapse2_1"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading2_1"
+                data-bs-parent="#accordionCard2"
+              >
+                <div class="accordion-body">
+                  <ul data-i18n-list="card2_benefits_list">
+                    <li>Kräftigt die Knochen und Gelenke</li>
+                    <li>Fördert die natürliche Darmbewegung</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-none d-md-block">
+            <h6 data-i18n="card2_benefits_title">Wirkung</h6>
+            <ul data-i18n-list="card2_benefits_list">
+              <li>Kräftigt die Knochen und Gelenke</li>
+              <li>Fördert die natürliche Darmbewegung</li>
+            </ul>
+          </div>
+          <div class="block">
+            <div class="block-title text-center text-muted small">Video</div>
+            <div class="video-container">
+              <video controls>
+                <source src="video1_pro_balance .mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+          <div class="block">
+            <div class="block-title text-center text-muted small">Video</div>
+            <div class="video-container">
+              <video controls>
+                <source src="video2_pro_balance.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+
+          <div class="btn-group-contact">
+            <a href="https://t.me/+pUyDKLefvegxZDcy" target="_blank" class="btn-contact btn-telegram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path
+                  fill="currentColor"
+                  d="M446.7 98.6l-50.4 246.9c-2.4 11.2-11.2 16.4-19.6 13.6L246.2 284.2l-15 144.3c-2.8 11.2-9.6 13.6-18 11.2L12.4 260.6c-7.6-3.6-7.6-10.4 1.2-14l422.4-165.6c8.8-3.6 16.4 1.2 13.6 10.4zM161 306.1l43.2-40.4 140.2-133.2c6.4-6 5.6-8.8-2.8-4.4L188 285.2l-12.8 12.8 28.6 86.8c1.6 4.8 1.2 7.6-2 9.2l-10.8 4.8-19.2-66.8z"
+                />
+              </svg>
+              <span data-i18n="btn_telegram">Telegram</span>
+            </a>
+            <a href="https://wa.me/4917630133780
+" target="_blank" class="btn-contact btn-whatsapp">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path
+                  fill="currentColor"
+                  d="M380.9 97.4C339.4 56.4 282 33.4 220.8 33.4 120.3 33.4 39.4 114.3 39.4 214.8c0 37.3 11.4 72.4 33.4 103.7L32 480l110.1-29.6c29 15.6 62.4 24.5 97.5 24.5 100.5 0 181.4-80.9 181.4-181.4 0-59.5-28.5-112.5-72.2-146.1zM220.8 450.6c-31.4 0-60.1-8.5-85.7-23.3L99.7 420l-16.1 79.5 81.3-21.8c24.6 13.2 52.8 20.9 83.1 20.9 88.2 0 160-71.8 160-160S309 90.6 220.8 90.6c-48.4 0-92.4 21.6-122.9 56.7L85.4 171l-15.6 30.6c-17.7 34.6-26.7 73.6-26.7 114.7 0 71.9 58.4 130.3 130.3 130.3 34.4 0 66.3-13.4 90.3-37.4l-14.2-14.2c-20.8 20.8-49.8 34.1-81.8 34.1z"
+                />
+              </svg>
+              <span data-i18n="btn_whatsapp">WhatsApp</span>
+            </a>
+          </div>
+
+          <!--<p class="product-note mt-3" data-i18n="card2_note">
+            Wichtiger Hinweis: Die hier dargestellten Informationen dienen nur zu Informationszwecken und ersetzen keine ärztliche Beratung.
+          </p>-->
+        </article>
+        <article id="card3" class="catalog-block" data-product-id="3">
+          <img id="img_card3" src="av_pro_12.png" alt="Pro 12+" class="product-img" />
+          <h4 data-i18n="card3_title">LR ALOE VIA Drinking Gel Honig</h4>
+          <p class="text-center text-secondary mb-3" data-i18n="card3_product_subtitle">
+            Der Klassiker: Stärkt das Immunsystem und unterstützt den Stoffwechsel
+          </p>
+          <div class="accordion d-block d-md-none" id="accordionCard2">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading2_1">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse2_1"
+                  aria-expanded="false"
+                  aria-controls="collapse2_1"
+                  data-i18n="card2_benefits_title"
+                >
+                  Wirkung
+                </button>
+              </h2>
+              <div
+                id="collapse2_1"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading2_1"
+                data-bs-parent="#accordionCard2"
+              >
+                <div class="accordion-body">
+                  <ul data-i18n-list="card3_benefits_list">
+                    <li>Kräftigt die Knochen und Gelenke</li>
+                    <li>Fördert die natürliche Darmbewegung</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-none d-md-block">
+            <h6 data-i18n="card3_benefits_title">Wirkung</h6>
+            <ul data-i18n-list="card3_benefits_list">
+              <li>Kräftigt die Knochen und Gelenke</li>
+              <li>Fördert die natürliche Darmbewegung</li>
+            </ul>
+          </div>
+          <div class="block">
+            <div class="block-title text-center text-muted small">Video</div>
+            <div class="video-container">
+              <video controls>
+                <source src="video_pro12.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+
+          <div class="btn-group-contact">
+            <a href="https://t.me/+pUyDKLefvegxZDcy" target="_blank" class="btn-contact btn-telegram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path
+                  fill="currentColor"
+                  d="M446.7 98.6l-50.4 246.9c-2.4 11.2-11.2 16.4-19.6 13.6L246.2 284.2l-15 144.3c-2.8 11.2-9.6 13.6-18 11.2L12.4 260.6c-7.6-3.6-7.6-10.4 1.2-14l422.4-165.6c8.8-3.6 16.4 1.2 13.6 10.4zM161 306.1l43.2-40.4 140.2-133.2c6.4-6 5.6-8.8-2.8-4.4L188 285.2l-12.8 12.8 28.6 86.8c1.6 4.8 1.2 7.6-2 9.2l-10.8 4.8-19.2-66.8z"
+                />
+              </svg>
+              <span data-i18n="btn_telegram">Telegram</span>
+            </a>
+            <a href="https://wa.me/4917630133780
+" target="_blank" class="btn-contact btn-whatsapp">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path
+                  fill="currentColor"
+                  d="M380.9 97.4C339.4 56.4 282 33.4 220.8 33.4 120.3 33.4 39.4 114.3 39.4 214.8c0 37.3 11.4 72.4 33.4 103.7L32 480l110.1-29.6c29 15.6 62.4 24.5 97.5 24.5 100.5 0 181.4-80.9 181.4-181.4 0-59.5-28.5-112.5-72.2-146.1zM220.8 450.6c-31.4 0-60.1-8.5-85.7-23.3L99.7 420l-16.1 79.5 81.3-21.8c24.6 13.2 52.8 20.9 83.1 20.9 88.2 0 160-71.8 160-160S309 90.6 220.8 90.6c-48.4 0-92.4 21.6-122.9 56.7L85.4 171l-15.6 30.6c-17.7 34.6-26.7 73.6-26.7 114.7 0 71.9 58.4 130.3 130.3 130.3 34.4 0 66.3-13.4 90.3-37.4l-14.2-14.2c-20.8 20.8-49.8 34.1-81.8 34.1z"
+                />
+              </svg>
+              <span data-i18n="btn_whatsapp">WhatsApp</span>
+            </a>
+          </div>
+
+          <!--<p class="product-note mt-3" data-i18n="card3_note">
+            Wichtiger Hinweis: Die hier dargestellten Informationen dienen nur zu Informationszwecken und ersetzen keine ärztliche Beratung.
+          </p>-->
+        </article>
+        <article id="card4" class="catalog-block" data-product-id="4">
+          <img id="img_card4" src="av_fiber_boost.png" alt="Fiber Boost" class="product-img" />
+          <h4 data-i18n="card4_title">LR ALOE VIA Mind Master Formula Red</h4>
+          <p class="text-center text-secondary mb-3" data-i18n="card4_product_subtitle">
+            Für mehr mentale Leistung und weniger Stress
+          </p>
+
+          <div class="accordion d-block d-md-none" id="accordionCard1">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading1_1">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse1_1"
+                  aria-expanded="false"
+                  aria-controls="collapse1_1"
+                  data-i18n="card1_benefits_title"
+                >
+                  Vorteile
+                </button>
+              </h2>
+              <div
+                id="collapse1_1"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading1_1"
+                data-bs-parent="#accordionCard1"
+              >
+                <div class="accordion-body">
+                  <ul data-i18n-list="card4_benefits_list">
+                    <li>Steigert die geistige Leistungsfähigkeit</li>
+                    <li>Reduziert Stress</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-none d-md-block">
+            <h6 data-i18n="card4_benefits_title">Vorteile</h6>
+            <ul data-i18n-list="card4_benefits_list">
+              <li>Steigert die geistige Leistungsfähigkeit</li>
+              <li>Reduziert Stress</li>
+            </ul>
+          </div>
+          <div class="block">
+            <div class="block-title text-center text-muted small">Video</div>
+            <div class="video-container">
+              <video controls>
+                <source src="video_fiber_boost.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+
+          <div class="btn-group-contact">
+            <a href="https://t.me/+pUyDKLefvegxZDcy" target="_blank" class="btn-contact btn-telegram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path
+                  fill="currentColor"
+                  d="M446.7 98.6l-50.4 246.9c-2.4 11.2-11.2 16.4-19.6 13.6L246.2 284.2l-15 144.3c-2.8 11.2-9.6 13.6-18 11.2L12.4 260.6c-7.6-3.6-7.6-10.4 1.2-14l422.4-165.6c8.8-3.6 16.4 1.2 13.6 10.4zM161 306.1l43.2-40.4 140.2-133.2c6.4-6 5.6-8.8-2.8-4.4L188 285.2l-12.8 12.8 28.6 86.8c1.6 4.8 1.2 7.6-2 9.2l-10.8 4.8-19.2-66.8z"
+                />
+              </svg>
+              <span data-i18n="btn_telegram">Telegram</span>
+            </a>
+            <a href="https://wa.me/4917630133780
+" target="_blank" class="btn-contact btn-whatsapp">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path
+                  fill="currentColor"
+                  d="M380.9 97.4C339.4 56.4 282 33.4 220.8 33.4 120.3 33.4 39.4 114.3 39.4 214.8c0 37.3 11.4 72.4 33.4 103.7L32 480l110.1-29.6c29 15.6 62.4 24.5 97.5 24.5 100.5 0 181.4-80.9 181.4-181.4 0-59.5-28.5-112.5-72.2-146.1zM220.8 450.6c-31.4 0-60.1-8.5-85.7-23.3L99.7 420l-16.1 79.5 81.3-21.8c24.6 13.2 52.8 20.9 83.1 20.9 88.2 0 160-71.8 160-160S309 90.6 220.8 90.6c-48.4 0-92.4 21.6-122.9 56.7L85.4 171l-15.6 30.6c-17.7 34.6-26.7 73.6-26.7 114.7 0 71.9 58.4 130.3 130.3 130.3 34.4 0 66.3-13.4 90.3-37.4l-14.2-14.2c-20.8 20.8-49.8 34.1-81.8 34.1z"
+                />
+              </svg>
+              <span data-i18n="btn_whatsapp">WhatsApp</span>
+            </a>
+          </div>
+
+          <!--<p class="product-note mt-3" data-i18n="card4_note">
+            Wichtiger Hinweis: Die hier dargestellten Informationen dienen nur zu Informationszwecken und ersetzen keine ärztliche Beratung.
+          </p>-->
+        </article>
+        <article id="card5" class="catalog-block" data-product-id="5">
+          <img id="img_card5" src="av_herbal_fasting.png" alt="Herbal Fasting" class="product-img" />
+          <h4 data-i18n="card5_title">LR ALOE VIA Mind Master Formula Red</h4>
+          <p class="text-center text-secondary mb-3" data-i18n="card5_product_subtitle">
+            Für mehr mentale Leistung und weniger Stress
+          </p>
+
+          <div class="accordion d-block d-md-none" id="accordionCard1">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading1_1">
+                <button
+                  class="accordion-button collapsed"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse1_1"
+                  aria-expanded="false"
+                  aria-controls="collapse1_1"
+                  data-i18n="card1_benefits_title"
+                >
+                  Vorteile
+                </button>
+              </h2>
+              <div
+                id="collapse1_1"
+                class="accordion-collapse collapse"
+                aria-labelledby="heading1_1"
+                data-bs-parent="#accordionCard1"
+              >
+                <div class="accordion-body">
+                  <ul data-i18n-list="card5_benefits_list">
+                    <li>Steigert die geistige Leistungsfähigkeit</li>
+                    <li>Reduziert Stress</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-none d-md-block">
+            <h6 data-i18n="card5_benefits_title">Vorteile</h6>
+            <ul data-i18n-list="card5_benefits_list">
+              <li>Steigert die geistige Leistungsfähigkeit</li>
+              <li>Reduziert Stress</li>
+            </ul>
+          </div>
+          <!--<div class="block">
+            <div class="block-title text-center text-muted small">Video</div>
+            <div class="video-container">
+              <video controls>
+                <source src="mind_master.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>-->
+
+          <div class="btn-group-contact">
+            <a href="https://t.me/+pUyDKLefvegxZDcy" target="_blank" class="btn-contact btn-telegram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path
+                  fill="currentColor"
+                  d="M446.7 98.6l-50.4 246.9c-2.4 11.2-11.2 16.4-19.6 13.6L246.2 284.2l-15 144.3c-2.8 11.2-9.6 13.6-18 11.2L12.4 260.6c-7.6-3.6-7.6-10.4 1.2-14l422.4-165.6c8.8-3.6 16.4 1.2 13.6 10.4zM161 306.1l43.2-40.4 140.2-133.2c6.4-6 5.6-8.8-2.8-4.4L188 285.2l-12.8 12.8 28.6 86.8c1.6 4.8 1.2 7.6-2 9.2l-10.8 4.8-19.2-66.8z"
+                />
+              </svg>
+              <span data-i18n="btn_telegram">Telegram</span>
+            </a>
+            <a href="https://wa.me/4917630133780
+" target="_blank" class="btn-contact btn-whatsapp">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <path
+                  fill="currentColor"
+                  d="M380.9 97.4C339.4 56.4 282 33.4 220.8 33.4 120.3 33.4 39.4 114.3 39.4 214.8c0 37.3 11.4 72.4 33.4 103.7L32 480l110.1-29.6c29 15.6 62.4 24.5 97.5 24.5 100.5 0 181.4-80.9 181.4-181.4 0-59.5-28.5-112.5-72.2-146.1zM220.8 450.6c-31.4 0-60.1-8.5-85.7-23.3L99.7 420l-16.1 79.5 81.3-21.8c24.6 13.2 52.8 20.9 83.1 20.9 88.2 0 160-71.8 160-160S309 90.6 220.8 90.6c-48.4 0-92.4 21.6-122.9 56.7L85.4 171l-15.6 30.6c-17.7 34.6-26.7 73.6-26.7 114.7 0 71.9 58.4 130.3 130.3 130.3 34.4 0 66.3-13.4 90.3-37.4l-14.2-14.2c-20.8 20.8-49.8 34.1-81.8 34.1z"
+                />
+              </svg>
+              <span data-i18n="btn_whatsapp">WhatsApp</span>
+            </a>
+          </div>
+
+          <!--<p class="product-note mt-3" data-i18n="card5_note">
+            Wichtiger Hinweis: Die hier dargestellten Informationen dienen nur zu Informationszwecken und ersetzen keine ärztliche Beratung.
+          </p>-->
+        </article>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // ===========================================
+      // 1. ФУНКЦИОНАЛ КНОПКИ "НАВЕРХ"
+      // ===========================================
+      const backToTopButton = document.getElementById('backToTop');
+
+      // Показать или скрыть кнопку
+      window.onscroll = function() {
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+          backToTopButton.classList.add('show');
+        } else {
+          backToTopButton.classList.remove('show');
+        }
+      };
+
+      // Плавная прокрутка наверх
+      backToTopButton.addEventListener('click', function() {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+      // 1. СЛОВАРЬ ПЕРЕВОДОВ
+      const translations = {
+        ru: {
+          seite_title_catalogue: 'Детокс',
+          btn_telegram: 'Telegram',
+          btn_whatsapp: 'WhatsApp',
+          btn_back_to_top: 'Наверх',
+          // Card 1 (Алоэ вера-Персик)
+          card1_title: 'Алоэ вера-питьевой гель.',
+          card1_product_subtitle: 'Метаболический активатор',
+          card1_benefits_title: 'Преимущества',
+          card1_benefits_list: [
+            'нейтрализует кислотность',
+            'выводит шлаки и токсины',
+            'очищает кровь, сосуды, капилляры, межклеточное пространство, лимфу',
+            'восстанавливает работу ЖКТ',
+            'улучшает деятельность почек',
+            'поддерживает печень',
+            'очищает кишечник',
+            'поддерживает клеточный метаболизм',
+            'подавляет аллергии',
+            'регулирует кислотно-щелочной баланс',
+            'активизирует силы самовосстановления в организме',
+            'ускоряет метаболизм, помогает похудеть',
+            'благодаря Pro Balance эффект усиливается',
+          ],
+          card1_note:
+            'Важное примечание: Информация, представленная здесь, предназначена только для ознакомительных целей и не заменяет консультацию врача.',
+          // Card 2 (Pro Balance)
+          card2_title: 'Pro Balance',
+          card2_product_subtitle: 'Нарушение кислотно-щелочного баланса — явление нежелательное.',
+          card2_benefits_title: 'Преимущества',
+          card2_benefits_list: [
+            'Кислотно-щелочной баланс следует беречь, так как все процессы обмена веществ в организме регулируются кислотно-щелочным балансом.',
+            'Комплекс минералов: Кальций, магний, калий, натрий и другие минералы — это как "Минеральная вода" из горного источника.',
+            'Он восстанавливает минеральный баланс, укрепляет кости, мышцы и кровь, предотвращает возрастные потери.',
+          ],
+          card2_note:
+            'Важное примечание: Информация, представленная здесь, предназначена только для ознакомительных целей и не заменяет консультацию врача.',
+             // Card 3 (Pro 12+)
+          card3_title: 'Пробиотик Pro 12+',
+          card3_product_subtitle: 'Детокс кишечника',
+          card3_benefits_title: 'Преимущества',
+          card3_benefits_list: [
+            'Принимает участие: в расщеплении белков, жиров и углеводов',
+            'в рециркуляции желчных кислот',
+            'улучшает детоксикационную функцию',
+            'подавление патогенов (плохих бактерий)',
+            'снижение уровня токсических метаболитов и канцерогенов',
+            'нормализация моторики ЖКТ (запоры, диарея)',
+            'усиление гликогенеза в печени',
+            'противовоспалительное действие',
+          ],
+          card3_note:
+            'Важное примечание: Информация, представленная здесь, предназначена только для ознакомительных целей и не заменяет консультацию врача.',
+             // Card 4 (Fiber Boost)
+          card4_title: 'Клетчатка Фаибер буст',
+          card4_product_subtitle: 'Fiber Boost — это растворимая клетчатка',
+          card4_benefits_title: 'Преимущества',
+          card4_benefits_list: [
+            'снижает скорость расщепления, усвоение продукта',
+            'снижает уровень холостерина',
+            'является профилактикой запора, удерживая влагу в составе пищевого комка и улучшая моторику кишечника',
+            'Увеличивает скорость прохождения пищи через толстый кишечник',
+            'снижает риск онкологических заболеваний толстого кишечника',
+            'содержит хром для сжигания жира (снижение веса)',
+            'снижает уровень сахара в крови',
+          ],
+          card4_note:
+            'Важное примечание: Информация, представленная здесь, предназначена только для ознакомительных целей и не заменяет консультацию врача.',
+            // Card 5 (Чай Herbal Fasting)
+          card5_title: 'Чай Herbal Fasting',
+          card5_product_subtitle: 'Чайный напиток из 7 сортов трав',
+          card5_benefits_title: 'Преимущества',
+          card5_benefits_list: [
+            'Поддерживает водный баланс',
+          ],
+          card5_note:
+            'Важное примечание: Информация, представленная здесь, предназначена только для ознакомительных целей и не заменяет консультацию врача.',
+          // Добавьте переводы для других карточек и элементов
+        },
+       de: {
+  seite_title_catalogue: 'Detox Produktkatalog', // Изменено с "Tedox" на "Detox"
+  btn_telegram: 'Telegram',
+  btn_whatsapp: 'WhatsApp',
+  btn_back_to_top: 'Nach Oben', // Перевод для кнопки "Наверх"
+
+  // Card 1 (Алоэ вера-питьевой гель.)
+  card1_title: 'Aloe Vera Trinkgel', // Убрано уточнение "Pfirsich"
+  card1_product_subtitle: 'Stoffwechselaktivator',
+  card1_benefits_title: 'Vorteile',
+  card1_benefits_list: [
+    'Neutralisiert Übersäuerung (Acidität)',
+    'Leitet Schlacken und Giftstoffe aus',
+    'Reinigt Blut, Gefäße, Kapillaren, den Interzellularraum und die Lymphe',
+    'Stellt die Funktion des Magen-Darm-Trakts wieder her (Magen-Darm-Regulierung)',
+    'Verbessert die Nierenfunktion',
+    'Unterstützt die Leber',
+    'Reinigt den Darm',
+    'Unterstützt den Zellstoffwechsel',
+    'Hemmt Allergien',
+    'Reguliert den Säure-Basen-Haushalt',
+    'Aktiviert die Selbstheilungskräfte des Körpers',
+    'Beschleunigt den Stoffwechsel, hilft beim Abnehmen',
+    'Der Effekt wird dank Pro Balance verstärkt',
+  ],
+  card1_note:
+    'Wichtiger Hinweis: Die hier dargestellten Informationen dienen nur zu Informationszwecken und ersetzen keine ärztliche Beratung.',
+
+  // Card 2 (Pro Balance)
+  card2_title: 'Pro Balance',
+  card2_product_subtitle: 'Eine Störung des Säure-Basen-Haushalts ist unerwünscht.',
+  card2_benefits_title: 'Vorteile',
+  card2_benefits_list: [
+    'Der Säure-Basen-Haushalt sollte geschützt werden, da alle Stoffwechselprozesse im Körper durch ihn reguliert werden.',
+    'Mineralstoffkomplex: Kalzium, Magnesium, Kalium, Natrium und andere Mineralien – vergleichbar mit "Mineralwasser" aus einer Bergquelle.',
+    'Es stellt den Mineralstoffhaushalt wieder her, stärkt Knochen, Muskeln und Blut und beugt altersbedingtem Verlust vor.',
+  ],
+  card2_note:
+    'Wichtiger Hinweis: Die hier dargestellten Informationen dienen nur zu Informationszwecken und ersetzen keine ärztliche Beratung.',
+
+  // Card 3 (Pro 12+)
+  card3_title: 'Probiotikum Pro 12+',
+  card3_product_subtitle: 'Darm-Detox', // Изменено с "Про Антиоксидант Комплекс" на "Детокс кишечника"
+  card3_benefits_title: 'Vorteile',
+  card3_benefits_list: [
+    'Beteiligt an der Aufspaltung von Proteinen, Fetten und Kohlenhydraten',
+    'Beteiligt an der Rezirkulation von Gallensäuren',
+    'Verbessert die Entgiftungsfunktion',
+    'Unterdrückung von Pathogenen (schlechten Bakterien)',
+    'Senkung des Spiegels toxischer Metaboliten und Karzinogene',
+    'Normalisierung der Magen-Darm-Motilität (Verstopfung, Durchfall)',
+    'Steigerung der Glykogenese in der Leber',
+    'Entzündungshemmende Wirkung',
+  ],
+  card3_note:
+    'Wichtiger Hinweis: Die hier dargestellten Informationen dienen nur zu Informationszwecken und ersetzen keine ärztliche Beratung.',
+
+  // Card 4 (Fiber Boost)
+  card4_title: 'Ballaststoffe Fiber Boost',
+  card4_product_subtitle: 'Fiber Boost ist ein löslicher Ballaststoff',
+  card4_benefits_title: 'Vorteile',
+  card4_benefits_list: [
+    'Reduziert die Geschwindigkeit der Aufspaltung und Aufnahme von Nährstoffen', // Уточнен перевод "усвоение продукта"
+    'Senkt den Cholesterinspiegel',
+    'Ist eine Prophylaxe gegen Verstopfung, da es Feuchtigkeit im Speisebrei bindet und die Darmmotilität verbessert',
+    'Erhöht die Geschwindigkeit der Nahrungspassage durch den Dickdarm',
+    'Reduziert das Risiko onkologischer Erkrankungen des Dickdarms',
+    'Enthält Chrom zur Fettverbrennung (Gewichtsreduktion)',
+    'Senkt den Blutzuckerspiegel',
+  ],
+  card4_note:
+    'Wichtiger Hinweis: Die hier dargestellten Informationen dienen nur zu Informationszwecken und ersetzen keine ärztliche Beratung.',
+
+  // Card 5 (Чай Herbal Fasting)
+  card5_title: 'Tee Herbal Fasting',
+  card5_product_subtitle: 'Teegetränk aus 7 Kräutersorten',
+  card5_benefits_title: 'Vorteile',
+  card5_benefits_list: [
+    'Unterstützt den Wasserhaushalt (hält den Körper hydriert)', // Новый перевод для единственного пункта
+  ],
+  card5_note:
+    'Wichtiger Hinweis: Die hier dargestellten Informationen dienen nur zu Informationszwecken und ersetzen keine ärztliche Beratung.',
+},
+      };
+
+      // 2. ФУНКЦИЯ ПЕРЕВОДА
+      function applyTranslations(lang) {
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+          const key = el.getAttribute('data-i18n');
+          if (translations[lang] && translations[lang][key]) {
+            el.textContent = translations[lang][key];
+          }
+        });
+
+        // Отдельная обработка для списков (ul)
+        document.querySelectorAll('[data-i18n-list]').forEach((ul) => {
+          const key = ul.getAttribute('data-i18n-list');
+          if (translations[lang] && translations[lang][key]) {
+            ul.innerHTML = translations[lang][key]
+              .map((item) => `<li>${item}</li>`)
+              .join('');
+          }
+        });
+
+        // Отдельная обработка для кнопок аккордеона
+        document.querySelectorAll('.accordion-button[data-i18n]').forEach((el) => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang] && translations[lang][key]) {
+                el.textContent = translations[lang][key];
+            }
+        });
+      }
+
+      // 3. ОБРАБОТКА ПЕРЕКЛЮЧЕНИЯ ЯЗЫКА
+      document.addEventListener('DOMContentLoaded', () => {
+        const langButtons = document.querySelectorAll('.lang-btn');
+        let currentLang = document.documentElement.lang;
+
+        // Устанавливаем начальный активный язык
+        langButtons.forEach((btn) => {
+          if (btn.getAttribute('data-lang') === currentLang) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+        
+        // Применяем начальные переводы
+        applyTranslations(currentLang);
+
+        langButtons.forEach((button) => {
+          button.addEventListener('click', () => {
+            const newLang = button.getAttribute('data-lang');
+
+            // Обновляем атрибут lang для всей страницы
+            document.documentElement.lang = newLang;
+            currentLang = newLang;
+
+            // Обновляем активное состояние кнопок
+            langButtons.forEach((btn) => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            // Применяем переводы
+            applyTranslations(newLang);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
